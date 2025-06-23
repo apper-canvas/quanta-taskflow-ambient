@@ -49,10 +49,37 @@ const AllTasks = () => {
     }
   };
 
-  const handleTaskUpdate = (updatedTask) => {
+const handleTaskUpdate = (updatedTask) => {
     setTasks(prev => prev.map(task => 
       task.Id === updatedTask.Id ? updatedTask : task
     ));
+  };
+
+  const handleBulkDelete = async (taskIds) => {
+    await Promise.all(taskIds.map(id => taskService.delete(id)));
+    setTasks(prev => prev.filter(task => !taskIds.includes(task.Id)));
+  };
+
+  const handleBulkComplete = async (taskIds) => {
+    const updatePromises = taskIds.map(id => taskService.update(id, { completed: true }));
+    const updatedTasks = await Promise.all(updatePromises);
+    
+    setTasks(prev => prev.map(task => {
+      const updated = updatedTasks.find(t => t.Id === task.Id);
+      return updated || task;
+    }));
+  };
+
+  const handleBulkMoveCategory = async (taskIds, categoryId) => {
+    const updatePromises = taskIds.map(id => 
+      taskService.update(id, { categoryId: parseInt(categoryId, 10) })
+    );
+    const updatedTasks = await Promise.all(updatePromises);
+    
+    setTasks(prev => prev.map(task => {
+      const updated = updatedTasks.find(t => t.Id === task.Id);
+      return updated || task;
+    }));
   };
 
   const handleSearch = (term) => {
@@ -191,9 +218,12 @@ const AllTasks = () => {
         />
 
         {/* Task List */}
-        <TaskList
+<TaskList
           tasks={filteredTasks}
           onTaskUpdate={handleTaskUpdate}
+          onBulkDelete={handleBulkDelete}
+          onBulkComplete={handleBulkComplete}
+          onBulkMoveCategory={handleBulkMoveCategory}
           showCompleted={showCompleted}
           emptyTitle={activeFiltersCount > 0 ? "No tasks match your filters" : "No tasks yet"}
           emptyDescription={activeFiltersCount > 0 ? "Try adjusting your search or filters" : "Create your first task to get started"}

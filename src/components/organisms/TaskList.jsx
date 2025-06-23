@@ -5,21 +5,27 @@ import TaskItem from '@/components/molecules/TaskItem';
 import SkeletonLoader from '@/components/molecules/SkeletonLoader';
 import ErrorState from '@/components/molecules/ErrorState';
 import EmptyState from '@/components/molecules/EmptyState';
+import BulkActionToolbar from '@/components/molecules/BulkActionToolbar';
 import taskService from '@/services/api/taskService';
 import categoryService from '@/services/api/categoryService';
 
 const TaskList = ({ 
   tasks: propTasks,
   onTaskUpdate,
+  onBulkDelete,
+  onBulkComplete,
+  onBulkMoveCategory,
   showCompleted = true,
   emptyTitle = "No tasks found",
   emptyDescription = "Add some tasks to get started",
   className = ''
 }) => {
-  const [tasks, setTasks] = useState(propTasks || []);
+const [tasks, setTasks] = useState(propTasks || []);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(!propTasks);
   const [error, setError] = useState(null);
+  const [selectedTaskIds, setSelectedTaskIds] = useState([]);
+  const [showBulkActions, setShowBulkActions] = useState(false);
 
   useEffect(() => {
     if (propTasks) {
@@ -109,6 +115,100 @@ const TaskList = ({
     } catch (err) {
       toast.error('Failed to delete task');
     }
+};
+
+  const handleSelectTask = (taskId) => {
+    setSelectedTaskIds(prev => {
+      const newSelected = prev.includes(taskId)
+        ? prev.filter(id => id !== taskId)
+        : [...prev, taskId];
+      setShowBulkActions(newSelected.length > 0);
+      return newSelected;
+    });
+  };
+
+  const handleSelectAll = () => {
+    const allTaskIds = filteredTasks.map(task => task.Id);
+    const allSelected = allTaskIds.every(id => selectedTaskIds.includes(id));
+    
+    if (allSelected) {
+      setSelectedTaskIds([]);
+      setShowBulkActions(false);
+    } else {
+      setSelectedTaskIds(allTaskIds);
+      setShowBulkActions(true);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (!window.confirm(`Are you sure you want to delete ${selectedTaskIds.length} tasks?`)) {
+      return;
+    }
+
+    try {
+      if (onBulkDelete) {
+        await onBulkDelete(selectedTaskIds);
+      } else {
+        // Fallback to individual deletes
+        await Promise.all(selectedTaskIds.map(id => taskService.delete(id)));
+        setTasks(prev => prev.filter(task => !selectedTaskIds.includes(task.Id)));
+      }
+      
+      setSelectedTaskIds([]);
+      setShowBulkActions(false);
+      toast.success(`${selectedTaskIds.length} tasks deleted`);
+    } catch (err) {
+      toast.error('Failed to delete tasks');
+    }
+  };
+
+  const handleBulkComplete = async () => {
+    try {
+      if (onBulkComplete) {
+        await onBulkComplete(selectedTaskIds);
+      } else {
+        // Fallback to individual updates
+        const updatePromises = selectedTaskIds.map(id => taskService.update(id, { completed: true }));
+        const updatedTasks = await Promise.all(updatePromises);
+        
+        setTasks(prev => prev.map(task => {
+          const updated = updatedTasks.find(t => t.Id === task.Id);
+          return updated || task;
+        }));
+      }
+      
+      setSelectedTaskIds([]);
+      setShowBulkActions(false);
+      toast.success(`${selectedTaskIds.length} tasks marked as complete`);
+    } catch (err) {
+      toast.error('Failed to complete tasks');
+    }
+  };
+
+  const handleBulkMoveCategory = async (categoryId) => {
+    try {
+      if (onBulkMoveCategory) {
+        await onBulkMoveCategory(selectedTaskIds, categoryId);
+      } else {
+        // Fallback to individual updates
+        const updatePromises = selectedTaskIds.map(id => 
+          taskService.update(id, { categoryId: parseInt(categoryId, 10) })
+        );
+        const updatedTasks = await Promise.all(updatePromises);
+        
+        setTasks(prev => prev.map(task => {
+          const updated = updatedTasks.find(t => t.Id === task.Id);
+          return updated || task;
+        }));
+      }
+      
+      const category = categories.find(c => c.Id === parseInt(categoryId, 10));
+      setSelectedTaskIds([]);
+      setShowBulkActions(false);
+      toast.success(`${selectedTaskIds.length} tasks moved to ${category?.name || 'category'}`);
+    } catch (err) {
+      toast.error('Failed to move tasks');
+    }
   };
 
   // Filter tasks based on showCompleted prop
@@ -163,8 +263,28 @@ const TaskList = ({
     );
   }
 
-  return (
+return (
     <div className={`space-y-3 ${className}`}>
+      {/* Bulk Actions Toolbar */}
+      <AnimatePresence>
+        {showBulkActions && (
+          <BulkActionToolbar
+            selectedCount={selectedTaskIds.length}
+            totalCount={filteredTasks.length}
+            categories={categories}
+            onSelectAll={handleSelectAll}
+            onBulkDelete={handleBulkDelete}
+            onBulkComplete={handleBulkComplete}
+            onBulkMoveCategory={handleBulkMoveCategory}
+            onClearSelection={() => {
+              setSelectedTaskIds([]);
+              setShowBulkActions(false);
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Task Items */}
       <AnimatePresence mode="popLayout">
         {sortedTasks.map((task, index) => (
           <motion.div
@@ -181,6 +301,9 @@ const TaskList = ({
               onToggleComplete={handleToggleComplete}
               onEdit={handleEditTask}
               onDelete={handleDeleteTask}
+              isSelected={selectedTaskIds.includes(task.Id)}
+              onSelect={handleSelectTask}
+              showSelection={showBulkActions}
             />
           </motion.div>
         ))}

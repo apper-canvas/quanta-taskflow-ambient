@@ -13,6 +13,9 @@ const TaskItem = ({
   onDelete,
   categories = [],
   className = '',
+  isSelected = false,
+  onSelect,
+  showSelection = false,
   ...props 
 }) => {
   const [isCompleting, setIsCompleting] = useState(false);
@@ -93,8 +96,17 @@ const TaskItem = ({
         ${className}
       `.trim()}
       {...props}
-    >
+>
       <div className="flex items-start gap-3">
+        {/* Selection Checkbox */}
+        {showSelection && (
+          <Checkbox
+            checked={isSelected}
+            onChange={() => onSelect?.(task.Id)}
+            className="mt-1 flex-shrink-0"
+          />
+        )}
+
         {/* Category Color Bar */}
         {category && (
           <div 
@@ -103,7 +115,7 @@ const TaskItem = ({
           />
         )}
 
-        {/* Checkbox */}
+{/* Completion Checkbox */}
         <Checkbox
           checked={task.completed}
           onChange={handleToggleComplete}
