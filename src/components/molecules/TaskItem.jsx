@@ -1,10 +1,12 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { format, isToday, isPast } from 'date-fns';
 import ApperIcon from '@/components/ApperIcon';
 import Checkbox from '@/components/atoms/Checkbox';
 import Badge from '@/components/atoms/Badge';
 import Button from '@/components/atoms/Button';
+import SubtaskList from '@/components/organisms/SubtaskList';
+import subtaskService from '@/services/api/subtaskService';
 
 const TaskItem = ({ 
   task, 
@@ -21,8 +23,30 @@ const TaskItem = ({
   const [isCompleting, setIsCompleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
+  const [showSubtasks, setShowSubtasks] = useState(false);
+  const [subtaskCount, setSubtaskCount] = useState(0);
+  const [subtaskLoading, setSubtaskLoading] = useState(false);
 
 const category = categories.find(c => c.Id === task.category_id);
+
+  // Load subtask count
+  useEffect(() => {
+    const loadSubtaskCount = async () => {
+      try {
+        setSubtaskLoading(true);
+        const subtasks = await subtaskService.getByTaskId(task.Id);
+        setSubtaskCount(subtasks.length);
+      } catch (error) {
+        console.error('Failed to load subtask count:', error);
+      } finally {
+        setSubtaskLoading(false);
+      }
+    };
+
+    if (task.Id) {
+      loadSubtaskCount();
+    }
+  }, [task.Id]);
   
   const handleToggleComplete = async () => {
     if (task.completed) {
@@ -172,7 +196,7 @@ if (!dueDate) return null;
             )}
           </div>
 
-          {/* Meta Info */}
+{/* Meta Info */}
           <div className="flex items-center gap-3 text-sm">
             {/* Priority Badge */}
             <Badge variant={getPriorityVariant(task.priority)} size="xs">
@@ -199,9 +223,60 @@ if (!dueDate) return null;
                 <span className="text-xs">{category.Name}</span>
               </div>
             )}
+
+            {/* Subtask Count & Toggle */}
+            {subtaskCount > 0 && (
+              <button
+                onClick={() => setShowSubtasks(!showSubtasks)}
+                className="flex items-center gap-1 text-gray-500 hover:text-primary transition-colors"
+              >
+                <ApperIcon name="ListChecks" size={12} />
+                <span className="text-xs">{subtaskCount} subtask{subtaskCount !== 1 ? 's' : ''}</span>
+                <ApperIcon 
+                  name={showSubtasks ? "ChevronUp" : "ChevronDown"} 
+                  size={10} 
+                />
+              </button>
+            )}
+
+            {/* Add Subtask Button */}
+            {!showSubtasks && subtaskCount === 0 && (
+              <button
+                onClick={() => setShowSubtasks(true)}
+                className="flex items-center gap-1 text-gray-400 hover:text-primary transition-colors"
+              >
+                <ApperIcon name="Plus" size={12} />
+                <span className="text-xs">Add subtask</span>
+              </button>
+            )}
           </div>
         </div>
-      </div>
+</div>
+
+      {/* Subtasks Section */}
+      <AnimatePresence>
+        {showSubtasks && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="mt-4 pt-4 border-t border-surface-200"
+          >
+            <SubtaskList 
+              taskId={task.Id}
+              onSubtaskUpdate={(updatedSubtask) => {
+                // Reload subtask count when subtasks change
+                if (task.Id) {
+                  subtaskService.getByTaskId(task.Id).then(subtasks => {
+                    setSubtaskCount(subtasks.length);
+                  });
+                }
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
