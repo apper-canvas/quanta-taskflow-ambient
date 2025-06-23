@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import TaskList from '@/components/organisms/TaskList';
 import TaskInput from '@/components/molecules/TaskInput';
 import SearchBar from '@/components/molecules/SearchBar';
+import StatisticsCard from '@/components/molecules/StatisticsCard';
 import Button from '@/components/atoms/Button';
 import ApperIcon from '@/components/ApperIcon';
 import taskService from '@/services/api/taskService';
@@ -206,17 +207,19 @@ const handleTaskUpdate = (updatedTask) => {
             )}
           </div>
         </div>
-      </div>
+</div>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        {/* Statistics Card */}
+        <StatisticsCard tasks={tasks} />
+
         {/* Quick Add */}
         <TaskInput
           onAddTask={handleAddTask}
           categories={categories}
           placeholder="Add a new task..."
         />
-
         {/* Task List */}
 <TaskList
           tasks={filteredTasks}
