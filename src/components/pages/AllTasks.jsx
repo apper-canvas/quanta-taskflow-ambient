@@ -26,7 +26,7 @@ const AllTasks = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [allTasks, categoriesData] = await Promise.all([
+const [allTasks, categoriesData] = await Promise.all([
         taskService.getAll(),
         categoryService.getAll()
       ]);
@@ -41,7 +41,7 @@ const AllTasks = () => {
 
   const handleAddTask = async (taskData) => {
     try {
-      const newTask = await taskService.create(taskData);
+const newTask = await taskService.create(taskData);
       setTasks(prev => [newTask, ...prev]);
       toast.success('Task created!');
     } catch (err) {
@@ -62,7 +62,7 @@ const handleTaskUpdate = (updatedTask) => {
   };
 
   const handleBulkComplete = async (taskIds) => {
-    const updatePromises = taskIds.map(id => taskService.update(id, { completed: true }));
+const updatePromises = taskIds.map(id => taskService.update(id, { completed: true }));
     const updatedTasks = await Promise.all(updatePromises);
     
     setTasks(prev => prev.map(task => {
@@ -72,7 +72,7 @@ const handleTaskUpdate = (updatedTask) => {
   };
 
   const handleBulkMoveCategory = async (taskIds, categoryId) => {
-    const updatePromises = taskIds.map(id => 
+const updatePromises = taskIds.map(id => 
       taskService.update(id, { categoryId: parseInt(categoryId, 10) })
     );
     const updatedTasks = await Promise.all(updatePromises);
@@ -100,7 +100,7 @@ const handleTaskUpdate = (updatedTask) => {
     }
     
     // Category filter
-    if (filterCategory !== 'all' && task.categoryId !== parseInt(filterCategory, 10)) {
+if (filterCategory !== 'all' && task.category_id !== parseInt(filterCategory, 10)) {
       return false;
     }
     

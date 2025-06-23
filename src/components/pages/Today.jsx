@@ -22,7 +22,7 @@ const Today = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [todayTasks, categoriesData] = await Promise.all([
+const [todayTasks, categoriesData] = await Promise.all([
         taskService.getToday(),
         categoryService.getAll()
       ]);
@@ -39,7 +39,7 @@ const Today = () => {
     try {
       // Set due date to today
       const today = new Date().toISOString().split('T')[0];
-      const newTask = await taskService.create({
+const newTask = await taskService.create({
         ...taskData,
         dueDate: today
       });

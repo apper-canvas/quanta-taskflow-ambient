@@ -22,7 +22,7 @@ const TaskItem = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
 
-  const category = categories.find(c => c.Id === task.categoryId);
+const category = categories.find(c => c.Id === task.category_id);
   
   const handleToggleComplete = async () => {
     if (task.completed) {
@@ -64,8 +64,8 @@ const TaskItem = ({
     }
   };
 
-  const formatDueDate = (dueDate) => {
-    if (!dueDate) return null;
+const formatDueDate = (dueDate) => {
+if (!dueDate) return null;
     const date = new Date(dueDate);
     if (isToday(date)) return 'Today';
     return format(date, 'MMM d');
@@ -180,14 +180,14 @@ const TaskItem = ({
             </Badge>
 
             {/* Due Date */}
-            {task.dueDate && (
-              <div className={`flex items-center gap-1 ${
-                isDueDateOverdue(task.dueDate) ? 'text-error' : 'text-gray-500'
+{task.due_date && (
+<div className={`flex items-center gap-1 ${
+                isDueDateOverdue(task.due_date) ? 'text-error' : 'text-gray-500'
               }`}>
                 <ApperIcon name="Calendar" size={12} />
                 <span className="text-xs">
-                  {formatDueDate(task.dueDate)}
-                  {isDueDateOverdue(task.dueDate) && ' (Overdue)'}
+{formatDueDate(task.due_date)}
+                  {isDueDateOverdue(task.due_date) && ' (Overdue)'}
                 </span>
               </div>
             )}
@@ -195,8 +195,8 @@ const TaskItem = ({
             {/* Category */}
             {category && (
               <div className="flex items-center gap-1 text-gray-500">
-                <ApperIcon name={category.icon} size={12} />
-                <span className="text-xs">{category.name}</span>
+<ApperIcon name={category.icon} size={12} />
+                <span className="text-xs">{category.Name}</span>
               </div>
             )}
           </div>

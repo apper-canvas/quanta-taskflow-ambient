@@ -20,7 +20,7 @@ const CategoryList = ({ className = '' }) => {
   const loadCategories = async () => {
     setLoading(true);
     try {
-      const result = await categoryService.getAll();
+const result = await categoryService.getAll();
       setCategories(result);
     } catch (err) {
       console.error('Failed to load categories:', err);
@@ -34,7 +34,7 @@ const CategoryList = ({ className = '' }) => {
     if (!newCategoryName.trim()) return;
 
     try {
-      const newCategory = await categoryService.create({
+const newCategory = await categoryService.create({
         name: newCategoryName.trim(),
         color: `#${Math.floor(Math.random()*16777215).toString(16)}`, // Random color
         icon: 'Folder'
@@ -108,8 +108,8 @@ const CategoryList = ({ className = '' }) => {
                     className="w-3 h-3 rounded-full flex-shrink-0"
                     style={{ backgroundColor: category.color }}
                   />
-                  <ApperIcon name={category.icon} size={14} />
-                  <span className="flex-1 min-w-0 truncate">{category.name}</span>
+<ApperIcon name={category.icon} size={14} />
+<span className="flex-1 min-w-0 truncate">{category.Name}</span>
                 </motion.div>
               ))}
             </div>

@@ -27,7 +27,7 @@ const TaskInput = ({
       await onAddTask?.({
         title: title.trim(),
         priority,
-        categoryId: parseInt(categoryId, 10),
+categoryId: parseInt(categoryId, 10),
         dueDate: dueDate || null
       });
       

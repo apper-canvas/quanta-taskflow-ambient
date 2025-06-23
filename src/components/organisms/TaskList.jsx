@@ -45,7 +45,7 @@ const [tasks, setTasks] = useState(propTasks || []);
     setLoading(true);
     setError(null);
     try {
-      const result = await taskService.getAll();
+const result = await taskService.getAll();
       setTasks(result);
     } catch (err) {
       setError(err.message || 'Failed to load tasks');
@@ -57,7 +57,7 @@ const [tasks, setTasks] = useState(propTasks || []);
 
   const loadCategories = async () => {
     try {
-      const result = await categoryService.getAll();
+const result = await categoryService.getAll();
       setCategories(result);
     } catch (err) {
       console.error('Failed to load categories:', err);
@@ -66,7 +66,7 @@ const [tasks, setTasks] = useState(propTasks || []);
 
   const handleToggleComplete = async (taskId) => {
     try {
-      const updatedTask = await taskService.toggleComplete(taskId);
+const updatedTask = await taskService.toggleComplete(taskId);
       
       // Update local state
       setTasks(prev => prev.map(task => 
@@ -84,7 +84,7 @@ const [tasks, setTasks] = useState(propTasks || []);
 
   const handleEditTask = async (taskId, updates) => {
     try {
-      const updatedTask = await taskService.update(taskId, updates);
+const updatedTask = await taskService.update(taskId, updates);
       
       // Update local state
       setTasks(prev => prev.map(task => 
@@ -106,7 +106,7 @@ const [tasks, setTasks] = useState(propTasks || []);
     }
 
     try {
-      await taskService.delete(taskId);
+await taskService.delete(taskId);
       
       // Update local state
       setTasks(prev => prev.filter(task => task.Id !== taskId));
@@ -150,7 +150,7 @@ const [tasks, setTasks] = useState(propTasks || []);
         await onBulkDelete(selectedTaskIds);
       } else {
         // Fallback to individual deletes
-        await Promise.all(selectedTaskIds.map(id => taskService.delete(id)));
+await Promise.all(selectedTaskIds.map(id => taskService.delete(id)));
         setTasks(prev => prev.filter(task => !selectedTaskIds.includes(task.Id)));
       }
       
@@ -168,7 +168,7 @@ const [tasks, setTasks] = useState(propTasks || []);
         await onBulkComplete(selectedTaskIds);
       } else {
         // Fallback to individual updates
-        const updatePromises = selectedTaskIds.map(id => taskService.update(id, { completed: true }));
+const updatePromises = selectedTaskIds.map(id => taskService.update(id, { completed: true }));
         const updatedTasks = await Promise.all(updatePromises);
         
         setTasks(prev => prev.map(task => {
@@ -191,8 +191,8 @@ const [tasks, setTasks] = useState(propTasks || []);
         await onBulkMoveCategory(selectedTaskIds, categoryId);
       } else {
         // Fallback to individual updates
-        const updatePromises = selectedTaskIds.map(id => 
-          taskService.update(id, { categoryId: parseInt(categoryId, 10) })
+const updatePromises = selectedTaskIds.map(id =>
+taskService.update(id, { categoryId: parseInt(categoryId, 10) })
         );
         const updatedTasks = await Promise.all(updatePromises);
         
@@ -205,7 +205,7 @@ const [tasks, setTasks] = useState(propTasks || []);
       const category = categories.find(c => c.Id === parseInt(categoryId, 10));
       setSelectedTaskIds([]);
       setShowBulkActions(false);
-      toast.success(`${selectedTaskIds.length} tasks moved to ${category?.name || 'category'}`);
+toast.success(`${selectedTaskIds.length} tasks moved to ${category?.Name || 'category'}`);
     } catch (err) {
       toast.error('Failed to move tasks');
     }

@@ -1,9 +1,29 @@
-import { Outlet, NavLink } from 'react-router-dom';
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import ApperIcon from '@/components/ApperIcon';
-import { routeArray } from '@/config/routes';
-import CategoryList from '@/components/organisms/CategoryList';
+import React, { useContext, useState } from "react";
+import { NavLink, Outlet } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { AuthContext } from "@/App";
+import "@/index.css";
+import tasksData from "@/services/mockData/tasks.json";
+import categoriesData from "@/services/mockData/categories.json";
+import { routeArray } from "@/config/routes";
+import ApperIcon from "@/components/ApperIcon";
+import CategoryList from "@/components/organisms/CategoryList";
+import Button from "@/components/atoms/Button";
+
+const LogoutButton = () => {
+  const { logout } = useContext(AuthContext);
+  
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      icon="LogOut"
+      onClick={logout}
+      className="p-2 h-auto text-gray-600 hover:text-gray-900"
+      title="Logout"
+    />
+  );
+};
 
 const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -25,9 +45,10 @@ const Layout = () => {
 
       <div className="flex-1 flex overflow-hidden">
         {/* Desktop Sidebar */}
-        <aside className="hidden lg:flex w-64 bg-surface border-r flex-col z-40">
-          <div className="p-6 border-b">
+<aside className="hidden lg:flex w-64 bg-surface border-r flex-col z-40">
+          <div className="p-6 border-b flex items-center justify-between">
             <h1 className="text-2xl font-heading font-bold text-primary">TaskFlow</h1>
+            <LogoutButton />
           </div>
           
           <nav className="flex-1 p-4 overflow-y-auto">
@@ -73,9 +94,10 @@ const Layout = () => {
                 exit={{ x: -280 }}
                 transition={{ type: "spring", damping: 25, stiffness: 200 }}
                 className="lg:hidden fixed left-0 top-0 bottom-0 w-64 bg-surface border-r flex flex-col z-50"
-              >
-                <div className="p-6 border-b">
+>
+                <div className="p-6 border-b flex items-center justify-between">
                   <h1 className="text-2xl font-heading font-bold text-primary">TaskFlow</h1>
+                  <LogoutButton />
                 </div>
                 
                 <nav className="flex-1 p-4 overflow-y-auto">

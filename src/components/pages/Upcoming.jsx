@@ -22,7 +22,7 @@ const Upcoming = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [upcomingTasks, categoriesData] = await Promise.all([
+const [upcomingTasks, categoriesData] = await Promise.all([
         taskService.getUpcoming(),
         categoryService.getAll()
       ]);
@@ -42,13 +42,13 @@ const Upcoming = () => {
       tomorrow.setDate(tomorrow.getDate() + 1);
       const tomorrowStr = tomorrow.toISOString().split('T')[0];
       
-      const newTask = await taskService.create({
+const newTask = await taskService.create({
         ...taskData,
         dueDate: taskData.dueDate || tomorrowStr
       });
       
       // Only add to list if it's actually upcoming
-      if (newTask.dueDate && new Date(newTask.dueDate) > new Date()) {
+if (newTask.due_date && new Date(newTask.due_date) > new Date()) {
         setTasks(prev => [newTask, ...prev]);
       }
       
@@ -76,13 +76,13 @@ const Upcoming = () => {
 
   // Group tasks by time period
   const groupedTasks = filteredTasks.reduce((groups, task) => {
-    if (!task.dueDate) {
+if (!task.due_date) {
       groups.later = groups.later || [];
       groups.later.push(task);
       return groups;
     }
 
-    const dueDate = parseISO(task.dueDate);
+const dueDate = parseISO(task.due_date);
     
     if (isTomorrow(dueDate)) {
       groups.tomorrow = groups.tomorrow || [];

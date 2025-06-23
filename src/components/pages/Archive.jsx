@@ -22,7 +22,7 @@ const Archive = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [completedTasks, categoriesData] = await Promise.all([
+const [completedTasks, categoriesData] = await Promise.all([
         taskService.getCompleted(),
         categoryService.getAll()
       ]);
@@ -74,8 +74,8 @@ const Archive = () => {
 
   // Group tasks by completion date
   const groupedTasks = filteredTasks.reduce((groups, task) => {
-    const completedDate = format(parseISO(task.createdAt), 'yyyy-MM-dd');
-    const dateKey = format(parseISO(task.createdAt), 'MMMM d, yyyy');
+const completedDate = format(parseISO(task.created_at), 'yyyy-MM-dd');
+const dateKey = format(parseISO(task.created_at), 'MMMM d, yyyy');
     
     if (!groups[dateKey]) {
       groups[dateKey] = [];
