@@ -79,12 +79,12 @@ const CategoryList = ({ className = '' }) => {
           Categories
         </button>
         
-        <Button
+<Button
           variant="ghost"
           size="sm"
           icon="Plus"
           onClick={() => setIsAddingNew(true)}
-          className="p-1 h-auto opacity-0 group-hover:opacity-100 transition-opacity"
+          className="p-1 h-auto"
         />
       </div>
 
