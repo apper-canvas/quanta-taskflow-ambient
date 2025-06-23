@@ -1,0 +1,52 @@
+[
+  {
+    "Id": 1,
+    "title": "Review Q4 budget proposal",
+    "completed": false,
+    "priority": "high",
+    "dueDate": "2024-01-15",
+    "categoryId": 1,
+    "createdAt": "2024-01-10T09:00:00Z",
+    "order": 1
+  },
+  {
+    "Id": 2,
+    "title": "Schedule team meeting for project kickoff",
+    "completed": false,
+    "priority": "medium",
+    "dueDate": "2024-01-12",
+    "categoryId": 2,
+    "createdAt": "2024-01-10T10:30:00Z",
+    "order": 2
+  },
+  {
+    "Id": 3,
+    "title": "Update website copy for new product launch",
+    "completed": true,
+    "priority": "high",
+    "dueDate": "2024-01-08",
+    "categoryId": 3,
+    "createdAt": "2024-01-05T14:15:00Z",
+    "order": 3
+  },
+  {
+    "Id": 4,
+    "title": "Research competitor pricing strategies",
+    "completed": false,
+    "priority": "low",
+    "dueDate": "2024-01-20",
+    "categoryId": 1,
+    "createdAt": "2024-01-10T16:45:00Z",
+    "order": 4
+  },
+  {
+    "Id": 5,
+    "title": "Prepare quarterly presentation slides",
+    "completed": false,
+    "priority": "medium",
+    "dueDate": "2024-01-18",
+    "categoryId": 2,
+    "createdAt": "2024-01-09T11:20:00Z",
+    "order": 5
+  }
+]
